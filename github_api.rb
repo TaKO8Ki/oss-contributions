@@ -199,7 +199,7 @@ module GitHubAPI
       )
       unless result.data&.user && result.data&.user&.contributions_collection
         result.errors.all.each do |field, err|
-          STDERR.puts("#{field}: #{err.inspect}")
+          # STDERR.puts("#{field}: #{err.inspect}")
         end
         break
       end
