@@ -194,33 +194,37 @@ params[:users].each_with_index do |user, i|
   puts "fetching user=#{i}/#{users_count}.............................."
   require './github_api'
 
-  GitHubAPI.repositories(user, from: params[:from], to: params[:to]).each do |repo|
-    all_repos[repo['name']] ||= repo
-    all_repos[repo['name']]['contributors'] ||= []
-
-    role = repo.delete('role')
-    contributions = repo.delete('contributions')
-
-    if !params[:contribution_only] || role != 'owner'
-      users['all'] ||= {}
-      users['all'][user] = true
-      users[role] ||= {}
-      users[role][user] = true
-      stats['total_commits'] ||= 0
-      stats['total_commits'] += contributions['commits'] || 0
-      stats['total_pull_requests'] ||= 0
-      stats['total_pull_requests'] += contributions['pull_requests'] || 0
-      stats['total_reviews'] ||= 0
-      stats['total_reviews'] += contributions['reviews'] || 0
-      stats['total_issues'] ||= 0
-      stats['total_issues'] += contributions['issues'] || 0
-
-      all_repos[repo['name']]['contributors'] << {
-        'user'          => user,
-        'role'          => role,
-        'contributions' => contributions,
-      }
+  begin
+    GitHubAPI.repositories(user, from: params[:from], to: params[:to]).each do |repo|
+      all_repos[repo['name']] ||= repo
+      all_repos[repo['name']]['contributors'] ||= []
+  
+      role = repo.delete('role')
+      contributions = repo.delete('contributions')
+  
+      if !params[:contribution_only] || role != 'owner'
+        users['all'] ||= {}
+        users['all'][user] = true
+        users[role] ||= {}
+        users[role][user] = true
+        stats['total_commits'] ||= 0
+        stats['total_commits'] += contributions['commits'] || 0
+        stats['total_pull_requests'] ||= 0
+        stats['total_pull_requests'] += contributions['pull_requests'] || 0
+        stats['total_reviews'] ||= 0
+        stats['total_reviews'] += contributions['reviews'] || 0
+        stats['total_issues'] ||= 0
+        stats['total_issues'] += contributions['issues'] || 0
+  
+        all_repos[repo['name']]['contributors'] << {
+          'user'          => user,
+          'role'          => role,
+          'contributions' => contributions,
+        }
+      end
     end
+  rescue
+    puts "failed to fetch user=#{user}"
   end
 end
 
