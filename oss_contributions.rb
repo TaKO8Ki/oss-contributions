@@ -179,6 +179,7 @@ if params[:organization]
     end
 
     break if list.empty?
+    puts "fetching page=#{page}.............................."
     page += 1
   end
 end
@@ -187,7 +188,10 @@ all_repos = {}
 stats = {}
 users = {}
 
-params[:users].each do |user|
+users_count = params[:users].length
+
+params[:users].each_with_index do |user, i|
+  puts "fetching user=#{i}/#{users_count}.............................."
   require './github_api'
 
   GitHubAPI.repositories(user, from: params[:from], to: params[:to]).each do |repo|
