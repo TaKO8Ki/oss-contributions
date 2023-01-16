@@ -228,7 +228,7 @@ module GitHubAPI
           }
         )
         repo['contributions']['details'] ||= []
-        repo['contributions']['details'] += c.contributions.nodes.map do |c|
+        repo['contributions']['details'] += c.contributions.nodes.compact.map do |c|
           {
             'type'        => 'pull-request',
             'url'         => c.pull_request.url,
