@@ -197,9 +197,9 @@ module GitHubAPI
           to: to.iso8601,
         }
       )
-      unless result.data.user && result.data.user.contributions_collection
+      unless result.data&.user && result.data&.user&.contributions_collection
         result.errors.all.each do |field, err|
-          STDERR.puts("#{field}: #{err.inspect}")
+          # STDERR.puts("#{field}: #{err.inspect}")
         end
         break
       end
@@ -228,7 +228,7 @@ module GitHubAPI
           }
         )
         repo['contributions']['details'] ||= []
-        repo['contributions']['details'] += c.contributions.nodes.map do |c|
+        repo['contributions']['details'] += c.contributions.nodes.compact.map do |c|
           {
             'type'        => 'pull-request',
             'url'         => c.pull_request.url,
